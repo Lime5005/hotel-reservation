@@ -6,8 +6,11 @@ public class Room implements IRoom {
     private RoomType enumeration;
     private boolean isFree;
 
-    public Room() {
-        super();
+    public Room(String roomNumber, double price, RoomType enumeration, boolean isFree) {
+        this.roomNumber = roomNumber;
+        this.price = price;
+        this.enumeration = enumeration;
+        this.isFree = isFree;
     }
 
     @Override
@@ -20,9 +23,17 @@ public class Room implements IRoom {
         return roomNumber;
     }
 
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
+    }
+
     @Override
     public Double getRoomPrice() {
         return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
     @Override
@@ -30,8 +41,16 @@ public class Room implements IRoom {
         return enumeration;
     }
 
+    public void setRoomType(RoomType enumeration) {
+        this.enumeration = enumeration;
+    }
+
     @Override
     public boolean isFree() {
         return isFree;
+    }
+
+    public void setFree(boolean isFree) {
+        this.isFree = isFree;
     }
 }
