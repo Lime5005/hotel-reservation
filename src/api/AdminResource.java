@@ -21,10 +21,9 @@ public class AdminResource {
         return CustomerService.getInstance().getCustomer(email);
     }
 
-    public void addRoom(List<IRoom> rooms) {
-        for (IRoom room : rooms) {
-            ReservationService.getInstance().addRoom(room);
-        }
+    public void addRoom(IRoom room) {
+        ReservationService.getInstance().addRoom(room);
+
     }
 
     public Collection<IRoom> getAllRooms() {
