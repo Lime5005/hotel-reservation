@@ -1,8 +1,7 @@
 package model;
 
-import service.CustomerService;
-
 import java.util.Date;
+import java.util.Objects;
 
 public class Reservation {
     Customer customer;
@@ -17,40 +16,54 @@ public class Reservation {
         this.checkOutDate = checkOutDate;
     }
 
-    public Customer getCustomer() {
-        return customer;
-    }
-
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
 
-    public IRoom getRoom() {
-        return room;
+    public Customer getCustomer() {
+        return customer;
     }
 
     public void setRoom(IRoom room) {
         this.room = room;
     }
 
-    public Date getCheckInDate() {
-        return checkInDate;
+    public IRoom getRoom() {
+        return room;
     }
 
     public void setCheckInDate(Date checkInDate) {
         this.checkInDate = checkInDate;
     }
 
-    public Date getCheckOutDate() {
-        return checkOutDate;
+    public Date getCheckInDate() {
+        return checkInDate;
     }
 
     public void setCheckOutDate(Date checkOutDate) {
         this.checkOutDate = checkOutDate;
     }
 
+    public Date getCheckOutDate() {
+        return checkOutDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Reservation that = (Reservation) o;
+        return Objects.equals(customer, that.customer) && Objects.equals(room, that.room) && Objects.equals(checkInDate, that.checkInDate) && Objects.equals(checkOutDate, that.checkOutDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(customer, room, checkInDate, checkOutDate);
+    }
+
     @Override
     public String toString() {
-        return "Customer " + customer + " reserved a " + room + " room " + "Check in at " + checkInDate + " check out at " + checkOutDate;
+        return String.format("Customer: %n" + getCustomer().getFirstName()+ "%nRoom: %n" + getRoom().getRoomNumber()
+                + "%nCheck In Date: %n" + getCheckInDate() + "%nCheck Out Date: %n" + getCheckOutDate() + "%n");
     }
 }

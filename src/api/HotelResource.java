@@ -1,3 +1,4 @@
+
 package api;
 
 import model.Customer;
@@ -6,48 +7,47 @@ import model.Reservation;
 import service.CustomerService;
 import service.ReservationService;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
 
 public class HotelResource {
-    //static reference for Reservation class
-    private static HotelResource hotelResource;
-    public static HotelResource getInstance(){
-        if (hotelResource == null){
+    private static HotelResource hotelResource = null;
+
+    static CustomerService customerService = CustomerService.getInstance();
+    static ReservationService reservationService = ReservationService.getInstance();
+
+    private HotelResource() { }
+
+    public static HotelResource getInstance() {
+        if (hotelResource == null) {
             hotelResource = new HotelResource();
         }
         return hotelResource;
     }
 
-    public Customer getCustomer(String email) {
-        return CustomerService.getInstance().getCustomer(email);
+    public static Customer getCustomer(String email) {
+        return customerService.getCustomer(email);
     }
 
-    public void createACustomer(String email, String firstName, String lastName) {
-        CustomerService.getInstance().addCustomer(email, firstName, lastName);
+    public static void createACustomer(String email, String firstName, String lastName) {
+        customerService.addCustomer(email, firstName, lastName);
     }
 
-    public IRoom getARoom(String roomNumber) {
-        return ReservationService.getInstance().getARoom(roomNumber);
+    public static IRoom getRoom(String roomNumber) {
+        return reservationService.getARoom(roomNumber);
     }
 
-    public Reservation bookARoom(String customerEmail, IRoom room, Date checkInDate, Date checkOutDate) {
-        Customer customer =  CustomerService.getInstance().getCustomer(customerEmail);
-        if (customer == null) {
-            return null;
-        }
-        return ReservationService.getInstance().reserveARoom(customer, room, checkInDate, checkOutDate);
+    public static Reservation bookARoom(String customerEmail, IRoom room, Date checkInDate, Date checkOutDate) {
+        Customer customer = customerService.getCustomer(customerEmail);
+        return reservationService.reserveARoom(customer, room, checkInDate, checkOutDate);
     }
 
-    public Collection<Reservation> getCustomersReservations(String customerEmail) {
-        Customer customer = CustomerService.getInstance().getCustomer(customerEmail);
-        if (customer == null) {
-            return null;
-        }
-        return ReservationService.getInstance().getCustomersReservation(customer);
+    public static Collection<Reservation> getCustomersReservations(String customerEmail) {
+        Customer customer = customerService.getCustomer(customerEmail);
+        return reservationService.getCustomersReservation(customer);
     }
 
-    public Collection<IRoom> findARoom(Date checkIn, Date checkOut) {
-        return ReservationService.getInstance().findARoom(checkIn, checkOut);
+    public static Collection<IRoom> findARoom(Date checkIn, Date checkOut) {
+        return reservationService.findRooms(checkIn, checkOut);
     }
-
 }

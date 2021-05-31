@@ -1,21 +1,20 @@
 package model;
 
-public class Room implements IRoom {
-    private String roomNumber;
-    private Double price;
-    private RoomType enumeration;
-    private boolean isFree;
+import java.util.Objects;
 
-    public Room(String roomNumber, double price, RoomType enumeration, boolean isFree) {
+public class Room implements IRoom{
+    protected String roomNumber;
+    protected Double price;
+    protected RoomType enumeration;
+    protected Boolean isFree;
+
+    public Room() { }
+
+    public Room(String roomNumber, Double price, RoomType enumeration, Boolean isFree) {
         this.roomNumber = roomNumber;
         this.price = price;
         this.enumeration = enumeration;
         this.isFree = isFree;
-    }
-
-    @Override
-    public String toString() {
-        return "The room number is: " + roomNumber + "The price is: " + price + "Room type is: " + enumeration;
     }
 
     @Override
@@ -23,17 +22,9 @@ public class Room implements IRoom {
         return roomNumber;
     }
 
-    public void setRoomNumber(String roomNumber) {
-        this.roomNumber = roomNumber;
-    }
-
     @Override
     public Double getRoomPrice() {
         return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
     }
 
     @Override
@@ -41,16 +32,26 @@ public class Room implements IRoom {
         return enumeration;
     }
 
-    public void setRoomType(RoomType enumeration) {
-        this.enumeration = enumeration;
-    }
-
     @Override
     public boolean isFree() {
         return isFree;
     }
 
-    public void setFree(boolean isFree) {
-        this.isFree = isFree;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Room room = (Room) o;
+        return Objects.equals(roomNumber, room.roomNumber) && Objects.equals(price, room.price) && enumeration == room.enumeration && Objects.equals(isFree, room.isFree);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(roomNumber, price, enumeration, isFree);
+    }
+
+    @Override
+    public String toString() {
+        return "Room Number: " + getRoomNumber() + "\nRoom Price: " + getRoomPrice() + "\nRoom Type: " + getRoomType();
     }
 }

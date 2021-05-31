@@ -1,15 +1,11 @@
 package model;
 
-import java.util.function.DoubleBinaryOperator;
-
 public class FreeRoom extends Room {
-
-    public FreeRoom(String roomNumber, Double price, RoomType enumeration, boolean isFree) {
-        super(roomNumber, 0.0, enumeration, true);
+    public FreeRoom() {
+        super.price = 0.00;
     }
 
-    @Override
     public String toString() {
-        return "The price for free room is 0";
+        return "Room Number: " + super.getRoomNumber() + "%nRoom Price: " + super.getRoomPrice() + "%nRoom Type: " + super.getRoomType();
     }
 }

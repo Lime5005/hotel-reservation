@@ -1,32 +1,19 @@
 package model;
 
-import java.util.regex.Matcher;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class Customer {
     private String firstName;
     private String lastName;
     private String email;
+    private final String emailRegex = "^(.+)@(.+).(.+)$";
+    private final Pattern PATTERN = Pattern.compile(emailRegex);
 
     public Customer(String firstName, String lastName, String email) {
-
-        String emailRegex = "^(.+)@(.+).(.+)$";
-        Pattern pattern = Pattern.compile(emailRegex);
-        Matcher matcher = pattern.matcher(email);
-        if (!matcher.matches()){
-            throw new IllegalArgumentException("Error, invalid email");
-        }
         this.firstName = firstName;
         this.lastName = lastName;
-        this.email = email;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+        this.email = validateEmail(email);
     }
 
     public String getFirstName() {
@@ -45,9 +32,36 @@ public class Customer {
         this.lastName = lastName;
     }
 
-    @Override
-    public String toString() {
-        return "My name is: " + firstName + " " + lastName + " and my email " + email;
+    public String getEmail() {
+        return email;
     }
 
+    public void setEmail(String email) {
+        this.email = validateEmail(email);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return Objects.equals(firstName, customer.firstName) && Objects.equals(lastName, customer.lastName) && Objects.equals(email, customer.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, email);
+    }
+
+    private String validateEmail(String email) {
+        if (PATTERN.matcher(email).matches()) {
+            return email;
+        }
+        throw new IllegalArgumentException("The email format is not valid!");
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Customer: " + firstName + " " + lastName + "%nEmail: " + email);
+    }
 }
