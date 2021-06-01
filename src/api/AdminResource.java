@@ -9,12 +9,17 @@ import java.util.Collection;
 import java.util.List;
 
 public class AdminResource {
+
+    // A static reference
     private static AdminResource adminResource = null;
+
+    // Initialize service classes
     static CustomerService customerService = CustomerService.getInstance();
     static ReservationService reservationService = ReservationService.getInstance();
 
     private AdminResource() {}
 
+    // A Singleton class
     public static AdminResource getInstance() {
         if (adminResource == null) {
             adminResource = new AdminResource();
@@ -36,12 +41,12 @@ public class AdminResource {
         return reservationService.getAllRooms();
     }
 
-    public static Collection<Customer> getAllCustomers() {
-        return customerService.getAllCustomers();
+    public static void getAllCustomers() {
+        customerService.getAllCustomers();
     }
 
-    public void displayAllReservations() {
+    public static void displayAllReservations() {
         reservationService.printAllReservations();
     }
-
 }
+

@@ -1,123 +1,126 @@
-
 import api.AdminResource;
-import model.Customer;
 import model.IRoom;
 import model.Room;
 import model.RoomType;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 
 public class AdminMenu {
-    static final Scanner input = new Scanner(System.in);
+    // To read input
+    final static Scanner scanner = new Scanner(System.in);
+
+    // AdminResource is for admin
     static AdminResource adminResource = AdminResource.getInstance();
 
     public AdminMenu() {
     }
 
-    private static void seeAllCustomers() {
-        Collection<Customer> customers = adminResource.getAllCustomers();
-        if (!customers.isEmpty()) {
-            for (Customer customer : customers) {
-                System.out.println(customer.toString());
+    public static void adminMenuPrompt() {
+        // Initialize option
+        int option = 0;
+
+        do {
+            System.out.println("--------------------------------------------------");
+            System.out.printf("Welcome back to Admin Panel, what would you like to do?%n");
+            System.out.println(" 1) See all Customers");
+            System.out.println(" 2) See all Rooms");
+            System.out.println(" 3) See all Reservations");
+            System.out.println(" 4) Add a Room");
+            System.out.println(" 5) Back to Main Menu");
+
+            // Scan the option
+            System.out.println();
+            System.out.print("Enter option: ");
+            option = scanner.nextInt();
+
+            // Tell admin the input is wrong
+            if (option < 1 || option > 5) {
+                System.out.println("Invalid option. Please choose 1~5");
             }
-        } else {
-            System.out.println("There is no customers yet");
+        } while (option < 1 || option > 5);
+
+        // Once option valid, process the option
+        switch (option) {
+            case 1:
+                AdminMenu.seeAllCustomers();
+                break;
+            case 2:
+                AdminMenu.seeAllRooms();
+                break;
+            case 3:
+                AdminMenu.seeAllReservations();
+                break;
+            case 4:
+                AdminMenu.adminAddRooms();
+                break;
+            case 5:
+                MainMenu mainMenu = new MainMenu();
+                mainMenu.mainMenuPrompt();
+                break;
+        }
+
+        // Re-display until admin quit admin panel
+        if (option != 5) {
+            AdminMenu.adminMenuPrompt();
         }
     }
 
-    private static void seeAllRooms() {
-        Collection<IRoom> rooms = adminResource.getAllRooms();
-        if (!rooms.isEmpty()) {
-            for (IRoom room : rooms) {
-                System.out.println(room.toString());
-            }
-        } else {
-            System.out.println("There is no rooms yet");
-        }
-    }
+    public static void adminAddRooms() {
 
-    private static void seeAllReservations() {
-        adminResource.displayAllReservations();
-    }
-
-    private static void addARoom() {
         String addRoom;
-        Integer type;
+        int typeOption;
+
         do {
             RoomType roomType = null;
-            Boolean isFree = true;
-            input.nextLine();
-            System.out.println("Enter room number:");
-            String roomNumber = input.nextLine();
-            System.out.println("Enter price per night:");
-            Double roomPrice = input.nextDouble();
+            scanner.nextLine();
+            System.out.println("Enter the room ID:");
+            String roomNumber = scanner.nextLine();
+            System.out.println("Enter the price per night:");
+            Double price = scanner.nextDouble();
             do {
-                System.out.println("Enter room type: 1 - Single bed, 2 - Double bed");
-                type = input.nextInt();
-                if (type == 1) {
+                System.out.println("Enter room type: 1 - Single bed, 2 - Double bed:");
+                typeOption = scanner.nextInt();
+
+                if (typeOption == 1) {
                     roomType = RoomType.SINGLE;
-                } else if (type == 2) {
+                } else if (typeOption == 2) {
                     roomType = RoomType.DOUBLE;
                 } else {
-                    System.out.println("Invalid input");
+                    System.out.println("Invalid input. Please try again.");
                 }
-            } while (type != 1 && type != 2);
-            IRoom room = new Room(roomNumber, roomPrice, roomType, isFree);
-            List<IRoom> rooms = new ArrayList<>();
+            } while (typeOption != 1 && typeOption != 2);
+
+            IRoom room = new Room(roomNumber, price, roomType, price == 0.0 ? true : false);
+            List<IRoom> rooms = new ArrayList<IRoom>();
             rooms.add(room);
             adminResource.addRoom(rooms);
             do {
                 System.out.println("Would you like to add another room? y/n");
-                addRoom = input.next().toLowerCase().trim();
+                addRoom = scanner.next().toLowerCase().trim();
             } while (!addRoom.equals("y") && !addRoom.equals("n"));
-        } while (addRoom.equals("y"));
 
+        } while (addRoom.equals("y"));
     }
 
-    public static void start() throws ParseException {
-        boolean quit = false;
-        String i;
-        while (!quit) {
-            do {
-                System.out.println("Admin Menu");
-                System.out.println("____________________________________________");
-                System.out.println("1. See all Customers");
-                System.out.println("2. See all Rooms");
-                System.out.println("3. See all Reservations");
-                System.out.println("4. Add a Room");
-                System.out.println("5. Add Test Data");
-                System.out.println("6. Back to Main Menu");
-                System.out.println("____________________________________________");
-                System.out.println("Please select a number for the menu option");
-                i = input.next().trim();
-                switch (i) {
-                    case "1":
-                        seeAllCustomers();
-                        break;
-                    case "2":
-                        seeAllRooms();
-                        break;
-                    case "3":
-                        seeAllReservations();
-                        break;
-                    case "4":
-                        addARoom();
-                        break;
-                    case "5":
-                        quit = true;
-                        break;
-                    case "6":
-                        MainMenu mainMenu = new MainMenu();
-                        mainMenu.start();
-                        break;
-                    default:
-                        System.out.println("Invalid input");
-                }
-            } while (!i.equals("1") && !i.equals("2") && !i.equals("3") && !i.equals("4") && !i.equals("5") && !i.equals("6") && quit != true);
+    public static void seeAllCustomers() {
+        adminResource.getAllCustomers();
+    }
+
+    public static void seeAllRooms() {
+        Collection<IRoom> rooms = adminResource.getAllRooms();
+        if (!rooms.isEmpty()) {
+            for (IRoom room : rooms) {
+                System.out.println(room);
+            }
+        } else {
+            System.out.println("There is no rooms yet.");
         }
+    }
+
+    public static void seeAllReservations() {
+        adminResource.displayAllReservations();
     }
 }

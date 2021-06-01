@@ -1,4 +1,3 @@
-
 package api;
 
 import model.Customer;
@@ -11,12 +10,15 @@ import java.util.Collection;
 import java.util.Date;
 
 public class HotelResource {
+
+    // A static reference
     private static HotelResource hotelResource = null;
 
+    // Initialize service classes
     static CustomerService customerService = CustomerService.getInstance();
     static ReservationService reservationService = ReservationService.getInstance();
 
-    private HotelResource() { }
+    private HotelResource() {}
 
     public static HotelResource getInstance() {
         if (hotelResource == null) {

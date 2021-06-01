@@ -7,37 +7,34 @@ public class Customer {
     private String firstName;
     private String lastName;
     private String email;
+
+    // For email validation
     private final String emailRegex = "^(.+)@(.+).(.+)$";
     private final Pattern PATTERN = Pattern.compile(emailRegex);
 
-    public Customer(String firstName, String lastName, String email) {
+    public Customer (String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = validateEmail(email);
+    }
+
+    private String validateEmail(String email) {
+        if (PATTERN.matcher(email).matches()) {
+            return email;
+        }
+        throw new IllegalArgumentException("The email format is not valid.");
     }
 
     public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+        return this.firstName;
     }
 
     public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+        return this.lastName;
     }
 
     public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = validateEmail(email);
+        return this.email;
     }
 
     @Override
@@ -53,15 +50,9 @@ public class Customer {
         return Objects.hash(firstName, lastName, email);
     }
 
-    private String validateEmail(String email) {
-        if (PATTERN.matcher(email).matches()) {
-            return email;
-        }
-        throw new IllegalArgumentException("The email format is not valid!");
-    }
-
     @Override
     public String toString() {
-        return String.format("Customer: " + firstName + " " + lastName + "%nEmail: " + email);
+        return String.format("Customer: " + firstName + " " + lastName + " Email: " + email);
     }
 }
+
