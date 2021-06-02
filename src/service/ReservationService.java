@@ -96,10 +96,10 @@ public class ReservationService {
     public static Collection<IRoom> recommendRooms(Date checkIn, Date checkOut) {
         List<IRoom> recommendRooms = new ArrayList<>();
         for (Reservation reservation : reservations) {
-            if ((!checkIn.equals(reservation.getCheckInDate()) && !checkOut.equals(reservation.getCheckOutDate())) ||
-                    !reservation.getCheckInDate().after(checkIn)  && !reservation.getCheckOutDate().before(checkOut)) {
+            if ((!checkIn.equals(reservation.getCheckInDate()) && !checkOut.equals(reservation.getCheckOutDate())) &&
+                    !checkOut.after(reservation.getCheckInDate())  || !checkIn.before(reservation.getCheckOutDate())) {
                 for (IRoom room : rooms) {
-                    if (!reservation.getRoom().equals(room)) {
+                    if (reservation.getRoom().equals(room)) {
                         recommendRooms.add(room);
                     }
                 }

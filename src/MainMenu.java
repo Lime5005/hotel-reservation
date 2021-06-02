@@ -3,12 +3,10 @@ import model.Customer;
 import model.IRoom;
 import model.Reservation;
 
+import java.awt.desktop.SystemEventListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Scanner;
+import java.util.*;
 
 public class MainMenu {
     // To read input
@@ -207,11 +205,36 @@ public class MainMenu {
 
         // Find available rooms in newly defined dates:
         Collection<IRoom> rooms = hotelResource.getRecommendRooms(sevenDaysLaterCheckIn, sevenDaysLaterCheckOut);
-        System.out.printf("These rooms: from" + sevenDaysLaterCheckIn + " to " + sevenDaysLaterCheckOut + "%n");
 
-        rooms.forEach(System.out::println);
+        // Show user if we have rooms:
+        if (!rooms.isEmpty()) {
+            System.out.printf("These rooms: from" + sevenDaysLaterCheckIn + " to " + sevenDaysLaterCheckOut + "%n");
+            rooms.forEach(System.out::println);
+            // Continue to book for recommend dates:
+            System.out.println("Want to book for recommend dates? y/n");
+            String bookRecommend = scanner.nextLine().toLowerCase().trim();
+            if (bookRecommend.equals("y")) {
+                scanner.nextLine();
+                System.out.println("Please enter your email");
+                String email = scanner.next();
+                Customer customer = hotelResource.getCustomer(email);
+                if (customer != null) {
+                    System.out.println("Enter the room# that you want from below the room(s) list:");
+                    rooms.forEach(System.out::println);
+                    String roomNumber = scanner.next();
+                    IRoom room = hotelResource.getRoom(roomNumber);
+                    hotelResource.bookARoom(email, room, sevenDaysLaterCheckIn, sevenDaysLaterCheckOut);
+                    System.out.println();
+                    System.out.printf("So room# %s is reserved for you, thank you %s %s!%n", roomNumber, customer.getFirstName(), customer.getLastName());
+                } else if (customer == null) {
+                    System.out.println("Invalid input. Please try again.");
+                }
+            }
+        } else {
+            System.out.println("No rooms, please try other dates.");
+            bookARoom(scanner);
+        }
 
-        // Continue to book for recommend dates:
     }
 
 }

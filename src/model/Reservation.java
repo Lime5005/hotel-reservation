@@ -51,7 +51,8 @@ public class Reservation {
         return String.format("Firstname: " + getCustomer().getFirstName() + " Lastname: " + getCustomer().getLastName() + "%n"
                 + "Email: " + getCustomer().getEmail() + "%n"
                 + "Booked room#" + getRoom().getRoomNumber() + " $" + getRoom().getRoomPrice() + "/night for a " + getRoom().getRoomType() + " bed%n"
-                + "From " + getCheckInDate() + " to " + getCheckOutDate());
+                + "From " + getCheckInDate() + " to " + getCheckOutDate() + "%n"
+                + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     }
 }
 
