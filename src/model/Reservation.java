@@ -48,8 +48,10 @@ public class Reservation {
 
     @Override
     public String toString() {
-        return String.format("Customer: " + getCustomer().getFirstName() + " " + getCustomer().getLastName() + " booked room#" + getRoom().getRoomNumber()
-                + " from " + getCheckInDate() + " to " + getCheckOutDate());
+        return String.format("Firstname: " + getCustomer().getFirstName() + " Lastname: " + getCustomer().getLastName() + "%n"
+                + "Email: " + getCustomer().getEmail() + "%n"
+                + "Booked room#" + getRoom().getRoomNumber() + " $" + getRoom().getRoomPrice() + "/night for a " + getRoom().getRoomType() + " bed%n"
+                + "From " + getCheckInDate() + " to " + getCheckOutDate());
     }
 }
 

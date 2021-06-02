@@ -164,8 +164,9 @@ public class MainMenu {
                     } while (!bookARoom.equals("y") && !bookARoom.equals("n"));
 
                 } else {
-                    System.out.println("There is no rooms available in chosen dates. Please try again later.");
-                    mainMenuPrompt();
+                    System.out.println("There is no room available in chosen dates.");
+                    System.out.printf("Recommended room(s) for 7 days later: ");
+                    recommendedRoom(checkIn, checkOut, scanner);
                 }
             } else {
                 System.out.printf("Invalid dates. Check-in date should be today onwards%n" +
@@ -190,6 +191,27 @@ public class MainMenu {
         } else {
             System.out.println("You haven't reserved any room yet.");
         }
+    }
+
+    public static void recommendedRoom(Date checkIn, Date checkOut, Scanner scanner) {
+
+        // Calculate with 7 days added in case no room available, to propose customer
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(checkIn);
+        calendar.add(Calendar.DATE, 7);
+        Date sevenDaysLaterCheckIn = calendar.getTime(); // add 7 days
+
+        calendar.setTime(checkOut);
+        calendar.add(Calendar.DATE, 7);
+        Date sevenDaysLaterCheckOut = calendar.getTime();
+
+        // Find available rooms in newly defined dates:
+        Collection<IRoom> rooms = hotelResource.getRecommendRooms(sevenDaysLaterCheckIn, sevenDaysLaterCheckOut);
+        System.out.printf("These rooms: from" + sevenDaysLaterCheckIn + " to " + sevenDaysLaterCheckOut + "%n");
+
+        rooms.forEach(System.out::println);
+
+        // Continue to book for recommend dates:
     }
 
 }

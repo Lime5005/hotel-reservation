@@ -82,7 +82,7 @@ public class ReservationService {
         List<IRoom> availableRooms = new ArrayList<IRoom>();
         for (Reservation reservation : reservations) {
             if ((!checkInDate.equals(reservation.getCheckInDate()) && !checkOutDate.equals(reservation.getCheckOutDate())) ||
-                    !checkInDate.before(reservation.getCheckOutDate()) && !checkOutDate.after(reservation.getCheckInDate())) {
+                    !reservation.getCheckInDate().after(checkInDate)  && !reservation.getCheckOutDate().before(checkOutDate)) {
                 for (IRoom room : rooms) {
                     if (!reservation.getRoom().equals(room)) {
                         availableRooms.add(room);
@@ -91,6 +91,21 @@ public class ReservationService {
             }
         }
         return availableRooms;
+    }
+
+    public static Collection<IRoom> recommendRooms(Date checkIn, Date checkOut) {
+        List<IRoom> recommendRooms = new ArrayList<>();
+        for (Reservation reservation : reservations) {
+            if ((!checkIn.equals(reservation.getCheckInDate()) && !checkOut.equals(reservation.getCheckOutDate())) ||
+                    !reservation.getCheckInDate().after(checkIn)  && !reservation.getCheckOutDate().before(checkOut)) {
+                for (IRoom room : rooms) {
+                    if (!reservation.getRoom().equals(room)) {
+                        recommendRooms.add(room);
+                    }
+                }
+            }
+        }
+        return recommendRooms;
     }
 
     /**
