@@ -50,9 +50,8 @@ public class Room implements IRoom {
 
     @Override
     public String toString() {
-        return String.format("Room#" + roomNumber + " $" + price + "/night" +
-                " for " + enumeration + " bed.");
+        return "Room #" + roomNumber + " $" + price + "/night" +
+                " for " + enumeration + " bed.";
     }
-
 }
 

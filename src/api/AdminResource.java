@@ -14,10 +14,11 @@ public class AdminResource {
     private static AdminResource adminResource = null;
 
     // Initialize service classes
-    static CustomerService customerService = CustomerService.getInstance();
-    static ReservationService reservationService = ReservationService.getInstance();
+    private static CustomerService customerService = CustomerService.getInstance();
+    private static ReservationService reservationService = ReservationService.getInstance();
 
-    private AdminResource() {}
+    private AdminResource() {
+    }
 
     // A Singleton class
     public static AdminResource getInstance() {
@@ -27,26 +28,26 @@ public class AdminResource {
         return adminResource;
     }
 
-    public static Customer getCustomer(String email) {
+    public Customer getCustomer(String email) {
         return customerService.getCustomer(email);
     }
 
-    public static void addRoom(List<IRoom> rooms) {
+    public void addRoom(List<IRoom> rooms) {
         for (IRoom room : rooms) {
             reservationService.addRoom(room);
         }
     }
 
-    public static Collection<IRoom> getAllRooms() {
+    public Collection<IRoom> getAllRooms() {
         return reservationService.getAllRooms();
     }
 
-    public static void getAllCustomers() {
-        customerService.getAllCustomers();
+    public Collection<Customer> getAllCustomers() {
+        return customerService.getAllCustomers();
     }
 
-    public static void displayAllReservations() {
-        reservationService.printAllReservations();
+    public void displayAllReservations() {
+        reservationService.printAllReservation();
     }
 }
 

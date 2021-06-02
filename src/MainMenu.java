@@ -3,182 +3,90 @@ import model.Customer;
 import model.IRoom;
 import model.Reservation;
 
-import java.awt.desktop.SystemEventListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Scanner;
 
 public class MainMenu {
+
+    private final HotelResource hotelResource = HotelResource.getInstance();
+
     // To read input
-    final static Scanner scanner = new Scanner(System.in);
-    // HotelResource is for customer in main menu
-    static HotelResource hotelResource = HotelResource.getInstance();
+    private final Scanner scanner = new Scanner(System.in);
 
-//    public MainMenu() {}
+    public void prompt() {
+        boolean shouldQuit = false;
 
-    public static void mainMenuPrompt() {
+        while (!shouldQuit) {
+            int option;
 
-        // Initialize option
-        int option = 0;
+            do {
+                System.out.println("--------------------------------------------------");
+                System.out.printf("Welcome to Golden Hotel, what do you like to do?%n");
+                System.out.println(" 1) Find and reserve a room");
+                System.out.println(" 2) See my reservations");
+                System.out.println(" 3) Create an account");
+                System.out.println(" 4) Admin");
+                System.out.println(" 5) Exit");
+                System.out.println();
 
-        do {
-            System.out.println("--------------------------------------------------");
-            System.out.printf("Welcome to Golden Hotel, what do you like to do?%n");
-            System.out.println(" 1) Find and reserve a room");
-            System.out.println(" 2) See my reservations");
-            System.out.println(" 3) Create an account");
-            System.out.println(" 4) Admin");
-            System.out.println(" 5) Exit");
+                // Scan the option
+                System.out.print("Enter option: ");
+                option = scanner.nextInt();
 
-            // Scan the option
-            System.out.println();
-            System.out.print("Enter option: ");
-            option = scanner.nextInt();
-
-            // Tell customer the input is wrong
-            if (option < 1 || option > 5) {
-                System.out.println("Invalid option. Please choose 1~5");
-            }
-
-        } while (option < 1 || option > 5);
-
-        // Once option valid, process the option
-        switch (option) {
-            case 1:
-                MainMenu.bookARoom(scanner);
-                break;
-            case 2:
-                MainMenu.showReservationsByCustomer(scanner);
-                break;
-            case 3:
-                MainMenu.createAccount(scanner);
-                break;
-            case 4:
-                AdminMenu adminMenu = new AdminMenu();
-                adminMenu.adminMenuPrompt();
-                break;
-            case 5:
-                scanner.nextLine();
-                break;
-        }
-
-        // Re-display the menu until customer quit
-        if (option != 5) {
-            MainMenu.mainMenuPrompt();
-        }
-    }
-
-    public static void createAccount(Scanner scanner) {
-        String firstName;
-        String lastName;
-        String email;
-        scanner.nextLine();
-        do {
-            System.out.println("Enter your first name: (at least 2 characters)");
-            firstName = scanner.nextLine();
-            System.out.println("Enter your last name: (at least 2 characters)");
-            lastName = scanner.nextLine();
-            System.out.println("Enter your email: (name@domain.com)");
-            email = scanner.nextLine();
-
-            if (firstName == "" || lastName == "" || email == "") {
-                System.out.println("Invalid input. Please try again.");
-            }
-            try {
-                hotelResource.createACustomer(email, firstName, lastName);
-            } catch (IllegalArgumentException ex) {
-                ex.getLocalizedMessage();
-            }
-
-
-        } while (firstName == "" || lastName == "" || email == "");
-    }
-
-    public static void bookARoom(Scanner scanner) {
-
-        // Initialize all data needed
-        Date checkIn;
-        Date checkOut;
-        String bookARoom;
-        String hasAccount;
-
-        Calendar calendar = Calendar.getInstance();
-
-        final String PATTERN = "yyyy-MM-dd";
-        SimpleDateFormat date = new SimpleDateFormat(PATTERN);
-        scanner.nextLine();
-
-
-        try {
-            System.out.println("Enter the check-in date: yyyy-MM-dd");
-            Date todayDate = date.parse(date.format(calendar.getTime()));
-            checkIn = date.parse(scanner.nextLine());
-            System.out.println("Enter the check-out date: yyyy-MM-dd");
-            checkOut = date.parse(scanner.nextLine());
-            if (!checkIn.before(todayDate) && !checkOut.before(checkIn)) {
-                // Find the all available rooms
-                Collection<IRoom> rooms = hotelResource.findARoom(checkIn, checkOut);
-
-                if (!rooms.isEmpty()) {
-                    do {
-                        System.out.println("--------------------------------------------------");
-                        System.out.println("Available room(s) list as below for chosen dates:");
-                        rooms.forEach(System.out::println);
-                        System.out.println("Would you like to book a room? y/n");
-                        bookARoom = scanner.next().toLowerCase().trim();
-                        if (bookARoom.equals("y")) {
-                            scanner.nextLine();
-                            System.out.println("Do you have an account with us? y/n");
-                            hasAccount = scanner.next().toLowerCase().trim();
-                            if (hasAccount.equals("n")) {
-                                System.out.println("You'll have to create an account first.");
-                                createAccount(scanner);
-                            } else if (hasAccount.equals("y")) {
-                                scanner.nextLine();
-                                System.out.println("Please enter your email");
-                                String email = scanner.next();
-                                Customer customer = hotelResource.getCustomer(email);
-                                if (customer != null) {
-                                    System.out.println("Enter the room# that you want from below the room(s) list:");
-                                    rooms.forEach(System.out::println);
-                                    String roomNumber = scanner.next();
-                                    IRoom room = hotelResource.getRoom(roomNumber);
-                                    hotelResource.bookARoom(email, room, checkIn, checkOut);
-                                    System.out.println();
-                                    System.out.printf("So room# %s is reserved for you, thank you %s %s!%n", roomNumber, customer.getFirstName(), customer.getLastName());
-                                } else if (customer == null) {
-                                    System.out.println("Invalid input. Please try again.");
-                                }
-
-                            } else {
-                                System.out.println("Invalid input. Please try again.");
-                            }
-                        } else if (bookARoom.equals("n")) {
-                            mainMenuPrompt();
-                        } else {
-                            System.out.println("Invalid input. Please try again.");
-                        }
-
-                    } while (!bookARoom.equals("y") && !bookARoom.equals("n"));
-
-                } else {
-                    System.out.println("There is no room available in chosen dates.");
-                    System.out.printf("Recommended room(s) for 7 days later: ");
-                    recommendedRoom(checkIn, checkOut, scanner);
+                // Check input
+                if (option < 1 || option > 5) {
+                    System.out.println("Invalid option. Please choose 1~5");
                 }
-            } else {
-                System.out.printf("Invalid dates. Check-in date should be today onwards%n" +
-                        "and check-out date should be equal or later than check-in date.%n" +
-                        "Type ENTER to start again.");
-                bookARoom(scanner);
+            } while (option < 1 || option > 5);
+
+            // Once option valid, process the option
+            switch (option) {
+                case 1 -> bookARoom();
+                case 2 -> showReservationsByCustomer();
+                case 3 -> createAccount();
+                case 4 -> new AdminMenu().prompt();
+                case 5 -> shouldQuit = true;
             }
-        } catch (ParseException e) {
-            e.printStackTrace();
         }
     }
 
-    public static void showReservationsByCustomer(Scanner scanner) {
-        scanner.nextLine();
+    public void bookARoom() {
+        Date checkIn = null, checkOut = null;
+
+        boolean checkInOutDatesValid = false;
+        while (!checkInOutDatesValid) {
+            checkIn = ScannerUtils.parseInputDate("Enter the check-in date: yyyy-MM-dd");
+            checkOut = ScannerUtils.parseInputDate("Enter the check-out date: yyyy-MM-dd");
+            checkInOutDatesValid = verifyCheckInCheckOutDates(checkIn, checkOut);
+        }
+
+        // Find the all available rooms
+        Collection<IRoom> availableRooms = hotelResource.findARoom(checkIn, checkOut);
+        if (availableRooms.isEmpty()) {
+            // No rooms available. Search for recommandations 7 days later
+            Date recommendedCheckIn = addSevenDaysToDate(checkIn);
+            Date recommendedCheckOut = addSevenDaysToDate(checkOut);
+
+            Collection<IRoom> recommendedRooms = hotelResource.findARoom(recommendedCheckIn, recommendedCheckOut);
+            if (recommendedRooms.isEmpty()) {
+                System.out.println("There are no rooms available for the given dates.");
+            } else {
+                System.out.printf("There are no rooms available for the given dates,%n" +
+                        "however, we've got available rooms a week later if you're interested.%n");
+                performBooking(recommendedRooms, recommendedCheckIn, recommendedCheckOut);
+            }
+        } else {
+            performBooking(availableRooms, checkIn, checkOut);
+        }
+    }
+
+    public void showReservationsByCustomer() {
+        Scanner scanner = new Scanner(System.in);
+
         System.out.println("Please enter your email:");
         String email = scanner.next();
         Collection<Reservation> reservations = hotelResource.getCustomersReservations(email);
@@ -191,50 +99,99 @@ public class MainMenu {
         }
     }
 
-    public static void recommendedRoom(Date checkIn, Date checkOut, Scanner scanner) {
-
-        // Calculate with 7 days added in case no room available, to propose customer
+    private boolean verifyCheckInCheckOutDates(Date checkIn, Date checkOut) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(checkIn);
-        calendar.add(Calendar.DATE, 7);
-        Date sevenDaysLaterCheckIn = calendar.getTime(); // add 7 days
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        calendar.setTime(checkOut);
-        calendar.add(Calendar.DATE, 7);
-        Date sevenDaysLaterCheckOut = calendar.getTime();
+        try {
+            Date todayDate = dateFormat.parse(dateFormat.format(calendar.getTime()));
 
-        // Find available rooms in newly defined dates:
-        Collection<IRoom> rooms = hotelResource.getRecommendRooms(sevenDaysLaterCheckIn, sevenDaysLaterCheckOut);
+            if (checkIn.before(todayDate) || checkOut.before(checkIn)) {
+                System.err.printf("Invalid dates. Check-in date should be today onwards%n" +
+                        "and check-out date should be equal or later than check-in date.%n");
+                return false;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
-        // Show user if we have rooms:
-        if (!rooms.isEmpty()) {
-            System.out.printf("These rooms: from" + sevenDaysLaterCheckIn + " to " + sevenDaysLaterCheckOut + "%n");
-            rooms.forEach(System.out::println);
-            // Continue to book for recommend dates:
-            System.out.println("Want to book for recommend dates? y/n");
-            String bookRecommend = scanner.nextLine().toLowerCase().trim();
-            if (bookRecommend.equals("y")) {
-                scanner.nextLine();
+        return true;
+    }
+
+    private void createAccount() {
+        Scanner scanner = new Scanner(System.in);
+
+        String firstName;
+        String lastName;
+        String email;
+
+        do {
+            System.out.println("Enter your first name: (at least 2 characters)");
+            firstName = scanner.nextLine();
+
+            System.out.println("Enter your last name: (at least 2 characters)");
+            lastName = scanner.nextLine();
+
+            System.out.println("Enter your email: (name@domain.com)");
+            email = scanner.nextLine();
+
+            if (firstName.equals("") || lastName.equals("") || email.equals("")) {
+                System.out.println("Invalid input. Please try again.");
+            }
+        } while (firstName.equals("") || lastName.equals("") || email.equals(""));
+
+        try {
+            hotelResource.createACustomer(email, firstName, lastName);
+        } catch (IllegalArgumentException ex) {
+            ex.getLocalizedMessage();
+        }
+    }
+
+    private Date addSevenDaysToDate(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_YEAR, 7);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            return dateFormat.parse(dateFormat.format(calendar.getTime()));
+        } catch (ParseException e) {
+        }
+        return null;
+    }
+
+    private void performBooking(Collection<IRoom> availableRooms, Date checkIn, Date checkOut) {
+        // Display available rooms
+        System.out.println("--------------------------------------------------");
+        System.out.println("Room(s) available for the given dates: " + checkIn + " -> " + checkOut);
+        availableRooms.forEach(System.out::println);
+        System.out.println();
+
+        if (ScannerUtils.parseYesNo("Would you like to book a room? y/n")) {
+            boolean hasAccount = ScannerUtils.parseYesNo("Do you have an account with us? y/n");
+            if (hasAccount) {
                 System.out.println("Please enter your email");
                 String email = scanner.next();
                 Customer customer = hotelResource.getCustomer(email);
-                if (customer != null) {
-                    System.out.println("Enter the room# that you want from below the room(s) list:");
-                    rooms.forEach(System.out::println);
+
+                if (customer == null) {
+                    System.err.println("Customer not found. Please try again.");
+                } else {
+                    System.out.println("Enter the room# that you want from the room(s) list below:");
+                    availableRooms.forEach(System.out::println);
                     String roomNumber = scanner.next();
                     IRoom room = hotelResource.getRoom(roomNumber);
-                    hotelResource.bookARoom(email, room, sevenDaysLaterCheckIn, sevenDaysLaterCheckOut);
+                    hotelResource.bookARoom(email, room, checkIn, checkOut);
                     System.out.println();
                     System.out.printf("So room# %s is reserved for you, thank you %s %s!%n", roomNumber, customer.getFirstName(), customer.getLastName());
-                } else if (customer == null) {
-                    System.out.println("Invalid input. Please try again.");
                 }
+            } else {
+                System.out.println("You'll have to create an account first.");
+                createAccount();
             }
         } else {
-            System.out.println("No rooms, please try other dates.");
-            bookARoom(scanner);
+            prompt();
         }
-
     }
 
 }

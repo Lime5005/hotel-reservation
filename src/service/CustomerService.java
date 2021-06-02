@@ -6,11 +6,11 @@ import java.util.*;
 public class CustomerService {
 
     // Initiate
-    private static CustomerService customerService = null;
+    private static CustomerService customerService;
     private static Collection<Customer> customers;
 
     private CustomerService() {
-        this.customers = new ArrayList<>();
+        customers = new ArrayList<>();
     }
 
     // A Singleton class, also called as a "static reference"
@@ -22,12 +22,9 @@ public class CustomerService {
     }
 
     /**
-     * Create a new customer with all the valid inputs
-     * @param email email input
-     * @param firstName first name
-     * @param lastName last name
+     * Creates a new customer with all the valid inputs
      */
-    public static void addCustomer(String email, String firstName, String lastName) {
+    public void addCustomer(String email, String firstName, String lastName) {
         try {
             Customer customer = new Customer(firstName, lastName, email);
             customers.add(customer);
@@ -36,7 +33,7 @@ public class CustomerService {
         }
     }
 
-    public static Customer getCustomer(String customerEmail) {
+    public Customer getCustomer(String customerEmail) {
         for (Customer customer : customers) {
             if (customer.getEmail().equals(customerEmail)) {
                 return customer;
@@ -45,16 +42,7 @@ public class CustomerService {
         return null;
     }
 
-    public static void getAllCustomers() {
-        if (!customers.isEmpty()) {
-            for (Customer customer : customers) {
-                System.out.println(customer);
-            }
-        } else {
-            System.out.println("There is no customers yet.");
-        }
+    public Collection<Customer> getAllCustomers() {
+        return customers;
     }
-
 }
-
-

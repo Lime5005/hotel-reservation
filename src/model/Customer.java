@@ -12,7 +12,7 @@ public class Customer {
     private final String emailRegex = "^(.+)@(.+).(.+)$";
     private final Pattern PATTERN = Pattern.compile(emailRegex);
 
-    public Customer (String firstName, String lastName, String email) {
+    public Customer (String firstName, String lastName, String email) throws IllegalArgumentException {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = validateEmail(email);
