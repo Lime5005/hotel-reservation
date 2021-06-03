@@ -67,7 +67,7 @@ public class MainMenu {
         // Find the all available rooms
         Collection<IRoom> availableRooms = hotelResource.findARoom(checkIn, checkOut);
         if (availableRooms.isEmpty()) {
-            // No rooms available. Search for recommandations 7 days later
+            // No rooms available. Search for recommendations 7 days later
             Date recommendedCheckIn = addSevenDaysToDate(checkIn);
             Date recommendedCheckOut = addSevenDaysToDate(checkOut);
 
@@ -155,7 +155,7 @@ public class MainMenu {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
             return dateFormat.parse(dateFormat.format(calendar.getTime()));
-        } catch (ParseException e) {
+        } catch (ParseException ignored) {
         }
         return null;
     }

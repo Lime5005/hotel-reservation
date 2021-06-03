@@ -14,8 +14,8 @@ public class AdminResource {
     private static AdminResource adminResource = null;
 
     // Initialize service classes
-    private static CustomerService customerService = CustomerService.getInstance();
-    private static ReservationService reservationService = ReservationService.getInstance();
+    private static final CustomerService customerService = CustomerService.getInstance();
+    private static final ReservationService reservationService = ReservationService.getInstance();
 
     private AdminResource() {
     }

@@ -9,8 +9,8 @@ public class ReservationService {
     //Initialize
     private static ReservationService reservationService = null;
 
-    private Set<IRoom> rooms;
-    private Set<Reservation> reservations;
+    private final Set<IRoom> rooms;
+    private final Set<Reservation> reservations;
 
     private ReservationService() {
         rooms = new HashSet<>();
@@ -38,19 +38,20 @@ public class ReservationService {
         return null;
     }
 
-    public Reservation reserveARoom(Customer customer, IRoom room, Date checkInDate, Date checkOutDate) {
+    public void reserveARoom(Customer customer, IRoom room, Date checkInDate, Date checkOutDate) {
         Reservation reservation = new Reservation(customer, room, checkInDate, checkOutDate);
         reservations.add(reservation);
-        return reservation;
     }
 
     public Collection<IRoom> findRooms(Date checkInDate, Date checkOutDate) {
         List<IRoom> availableRooms = new ArrayList<>();
 
         for (IRoom room : rooms) {
+            boolean roomAvailable = true;
+
             // Check if room is available
             for (Reservation reservation : reservations) {
-                if (reservation.getRoom() == room) {
+                if (roomAvailable && reservation.getRoom() == room) {
                     boolean checkInKO = checkInDate.equals(reservation.getCheckInDate()) ||
                             (checkInDate.after(reservation.getCheckInDate()) &&
                                     checkInDate.before(reservation.getCheckOutDate()));
@@ -59,10 +60,15 @@ public class ReservationService {
 
                     if (checkInKO || checkOutKO) {
                         // Room is occupied
+                        roomAvailable = false;
                     } else {
-                        availableRooms.add(room);
+                        // Room may be available but we have to check other reservations to ensure
                     }
                 }
+            }
+
+            if (roomAvailable) {
+                availableRooms.add(room);
             }
         }
 
